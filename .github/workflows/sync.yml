@@ -2,7 +2,7 @@ name: Sync Fork with Upstream
 
 on:
   schedule:
-    # এই লাইনটি পরিবর্তন করে প্রতি ৫ মিনিটে একবার করা হয়েছে
+    # প্রতি ৫ মিনিটে একবার স্বয়ংক্রিয়ভাবে রান হবে
     - cron: '*/5 * * * *'
   workflow_dispatch: # Actions ট্যাব থেকে ম্যানুয়াল রান করার জন্য
 
@@ -10,27 +10,15 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      # ধাপ ১: আপনার রিপোজিটরির কোড চেকআউট করে
       - name: Checkout Fork
         uses: actions/checkout@v4
         with:
-          # সব git history নিয়ে আসে, যা মার্জ করার জন্য জরুরি
           fetch-depth: 0
 
-      # ধাপ ২: মূল রিপোজিটরির সাথে আপনার ফোর্ককে সিঙ্ক করে
       - name: Sync with Upstream
         run: |
-          # মূল রিপোজিটরির URL যোগ করে
           git remote add upstream https://github.com/drmlive/fancode-live-events.git
-          
-          # মূল রিপোজিটরি থেকে সব আপডেট নিয়ে আসে
           git fetch upstream
-          
-          # আপনার main ব্রাঞ্চে যান (যদি আপনার ব্রাঞ্চের নাম ভিন্ন হয়, যেমন master, তবে সেটি লিখুন)
           git checkout main
-          
-          # মূল রিপোজিটরির main ব্রাঞ্চের সাথে আপনার ব্রাঞ্চ মার্জ করে
           git merge upstream/main -m "Sync with upstream repository"
-          
-          # আপনার রিপোজিটরিতে পরিবর্তনগুলো পুশ করে
           git push origin main
